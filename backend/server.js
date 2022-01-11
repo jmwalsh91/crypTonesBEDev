@@ -3,56 +3,58 @@ const express = require('express')
 const app = express()
 const PORT = 4000
 const methodOverride = require('method-override')
+const mongoose = require('mongoose')
 const router = require('./controller/cryptoController')
 const axios = require('axios').default;
+const cors = require('cors')
+const cookieParser = require('cookie-parser')
 const _ = require('lodash')
 
-
-
-/* const { populate } = require('./models/products') */
-
-
 let path = require('path')
-app.use(methodOverride('_method'));
-app.use(express.static(path.join(__dirname, '/public')));
+//move to connections
+const mongoURI = 'mongodb://127.0.0.1:27017/cryptones'
+const db = mongoose.connection
+mongoose.connect( mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+.then(instance => {
+    console.log(mongoURI)
+    console.log(`Connected to the db: ${instance.connections[0].name}`);
+})
+.catch(err=> console.log(`Connection failed`, err))
+//end move to connections 
 
-app.use('/', router)
+app.use(methodOverride('_method'));
+app.use(cors())
+app.use(cookieParser())
+app.use(express.json())
+app.use('/crypto/', router)
+
 const routeHit = (req,res,next) =>{
     console.log("A new route was just hit");
     next()
 }
 app.use(routeHit)
 
+
 app.use(express.urlencoded({extended:false}));
 
 
+const User = require ('./models/userModel.js')
 
-/* 
-router.get('/test', (req, res) => {
-    res.send(res)
+const userInput = {
+    username : "testakak",
+    password : "1203498"
+}
+
+const user = new User(userInput)
+user.save((err, document) => {
+    if (err) {
+        console.log(err)
+    } else {
+        console.log(document)
+    }
 })
-  */
 
-// also use _.range to create an array of vals within args
-function evalArray (target) {
-    let onOff = []
-    target.forEach((target) => {
-        if (_.inRange(target, 26.9, 128.1) == true) {
-            console.log('wow!' + target)
-            onOff.push('1')
-        } else {
-            onOff.push('0')
-            console.log('false' + target)}
-    })
-    let zipArr = _.zip(target, onOff)
-    console.log(zipArr)
-
-  }
-  let trueArr = [80, 28, 100, 127, 128, 76, 40]
-  evalArray(trueArr)
-  let falseArr = [80, 28, 200, 129, 128, 20, 40]
-  evalArray(falseArr)
-
-// First check 
-  
 app.listen(PORT, ()=> console.log(`whackadoodle ${PORT} rePORTing for duty sir yes sir`))

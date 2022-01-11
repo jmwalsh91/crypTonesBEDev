@@ -10,7 +10,7 @@ const valArray = []
 
 const axiosCrypt = axios.create({
     baseURL: 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest',
-    timeout: 1000,
+    timeout: 5000,
     headers: {'X-CMC_PRO_API_KEY': '9afa7f9a-3812-4a98-83ce-d3d415ca6909'}
   });
 
@@ -69,11 +69,10 @@ this works
 const axiosCryptAlpha = axios.create({
     baseURL: 'https://www.alphavantage.co/query?function=CRYPTO_INTRADAY',
     timeout: 10000,
-    headers: {'apikey': 'CQGAUB8UWNFMD2AJ'}
   });
-  let valArr = []
+  
 
-  axiosCryptAlpha.interceptors.response.use(response => { 
+  /* axiosCryptAlpha.interceptors.response.use(response => { 
 
     let target = response.data['Time Series Crypto (5min)']
     console.log(target)
@@ -92,11 +91,12 @@ const axiosCryptAlpha = axios.create({
             }
         }
     } 
-    console.log(newestVictory)
-})  
+    console.log(newestVictory) 
+})   */
 
-function testApi() {
-   
+
+   router.get('/ohlcv', (req, res) => {
+       console.log('ohlcv route hit')
     axiosCryptAlpha.get( '', {
         params: {
             symbol: 'BTC',
@@ -105,7 +105,16 @@ function testApi() {
             apikey: 'CQGAUB8UWNFMD2AJ'
         }      
     })
-}
-testApi()
+    .then(response => {
+        let resArr = []
+        let target = response.data['Time Series Crypto (5min)']
+       
+        res.send(target)
+        console.log(target)
+    } )
+    .catch(console.log('the promise was rejected'))
+})
+
+
 
 module.exports = router 

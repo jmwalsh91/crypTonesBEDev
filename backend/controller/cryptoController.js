@@ -72,7 +72,7 @@ const axiosCryptAlpha = axios.create({
   });
   
 
-  /* axiosCryptAlpha.interceptors.response.use(response => { 
+/*   axiosCryptAlpha.interceptors.response.use(response => { 
 
     let target = response.data['Time Series Crypto (5min)']
     console.log(target)
@@ -94,9 +94,28 @@ const axiosCryptAlpha = axios.create({
     console.log(newestVictory) 
 })   */
 
+axiosCryptAlpha.interceptors.response.use(response => { 
+    console.log('interceptor')
+    let target = response.data['Time Series Crypto (5min)']
 
-   router.get('/ohlcv', (req, res) => {
-       console.log('ohlcv route hit')
+   function formatRes(arrOne, arrTwo) {
+    return resFormatted = _.zip(arrOne,arrTwo)
+   }
+
+   const reqKeys= Object.keys(target)
+   const formattedOb = Object.values(target).map((thing) => {
+        return Object.values(thing)
+    })   
+
+   let volArr = formattedOb.map((thing) => {
+       return thing.pop() 
+   })
+   formatRes(reqKeys, formattedOb)
+   return response = {resFormatted, volArr}
+})
+
+
+   router.get('/ohlcv', (req, res, err) => {
     axiosCryptAlpha.get( '', {
         params: {
             symbol: 'BTC',
@@ -105,14 +124,12 @@ const axiosCryptAlpha = axios.create({
             apikey: 'CQGAUB8UWNFMD2AJ'
         }      
     })
-    .then(response => {
-        let resArr = []
-        let target = response.data['Time Series Crypto (5min)']
-       
-        res.send(target)
-        console.log(target)
-    } )
-    .catch(console.log('the promise was rejected'))
+    .then(data => {
+        console.log('then hit')
+        console.log(data)
+        res.send(data)
+    })
+    .catch((err) => console.log(err))
 })
 
 

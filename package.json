@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/jmwalsh91/crypTonesBEDev/issues"
   },
-  "homepage": "https://github.com/jmwalsh91/crypTonesBEDev#readme"
+  "homepage": "https://github.com/jmwalsh91/crypTonesBEDev#readme",
+  "dependencies": {
+    "passport": "^0.5.2"
+  }
 }

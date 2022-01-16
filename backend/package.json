@@ -29,8 +29,12 @@
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "express": "^4.17.2",
+    "express-session": "^1.17.2",
     "lodash": "^4.17.21",
     "method-override": "^3.0.0",
-    "mongoose": "^6.1.5"
+    "mongoose": "^6.1.5",
+    "passport": "^0.5.2",
+    "passport-local": "^1.0.0",
+    "passport-local-mongoose": "^6.1.0"
   }
 }

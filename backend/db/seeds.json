@@ -1,19 +1,19 @@
 [
     {
-        "username" : "itzamna",
+        "email" : "itzamna",
         "password" : "1230983"
     },
     {
-        "username" : "ixTab",
+        "email" : "ixTab",
         "password" : "112930981"
     },
 
     {
-        "username" : "ixChel",
+        "email" : "ixChel",
         "password" : "39847982"
     },
     {
-        "username" : "zuhuyKak",
+        "email" : "zuhuyKak",
         "password" : "23489"
     }
 ]

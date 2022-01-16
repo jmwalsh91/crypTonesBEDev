@@ -1,23 +1,24 @@
-const mongoose = require('mongoose')
-const bcrypt = require('bcrypt')
+const mongoose = require('../db/connection.js')
+const Schema = mongoose.Schema
+const passport = require('passport')
+const passportLocalMongoose = require('passport-local-mongoose')
+/* const bcrypt = require('bcrypt') */
 
-const UserSchema = new mongoose.Schema({
-    username : {
+const userSchema = new Schema({
+        username : {
         type: String,
         required: true,
         min: 5,
         max: 18
     },
-    password : {
-        type: String,
-        required: true
-    },
     savedPatches: [{
         type: mongoose.Schema.Types.ObjectId, ref: 'Patch'
-    }],
+    }]
 
 });
+userSchema.plugin(passportLocalMongoose)
 
+/* 
 UserSchema.pre('save', function(next){
     if(!this.isModified('password')) { 
         return next()
@@ -44,6 +45,7 @@ UserSchema.methods.comparePassword = function(password, callback){
             return callback(null, this)
             }
         })
-    };
+    }; */
 
-    module.exports = mongoose.model('User', UserSchema)
+    const User = mongoose.model('User', userSchema)
+    module.exports = User

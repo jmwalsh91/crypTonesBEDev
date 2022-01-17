@@ -2,6 +2,8 @@
 const LocalStrategy = require('passport-local').Strategy
 const JwtStrategy = require('passport-jwt')
 const User = require('./models/userModel')
+
+
 const cookieExtractor = req => {
     let token = null
     if (req && req.cookies){

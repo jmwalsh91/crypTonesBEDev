@@ -6,6 +6,7 @@ const userModel = require('../models/userModel')
 const User = require('../models/userModel.js')
 //change router to axios?
 const passport = require('passport')
+const localStrategy = require('passport-local')
 
 userRouter.get('/test', (req, res) => {
     console.log('oh hi there this is userRouter speaking')
@@ -29,12 +30,24 @@ userRouter.post('/login', passport.authenticate('local'), (req, res, next) => {
         else {
           req.logIn(user, (err) => {
             if (err) throw err;
-            res.send("Authentication successful");
-            console.log(req.user);
+            currentUser = {
+                username: req.user.username,
+                isLoggedIn: true,
+                savedPatches: req.user.savedPatches
+          }
+            
+            res.send({currentUser});
+
+            console.log(currentUser);
           });
         }
       })(req, res, next);
     });
 
-  
+    userRouter.post('/logout', (req, res) => {
+      req.logout();
+      res.send('Congrats.');
+    });
+          
+        
 module.exports = userRouter

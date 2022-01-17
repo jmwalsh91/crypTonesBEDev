@@ -14,13 +14,14 @@ const axiosCryptAlpha = axios.create({
 axiosCryptAlpha.interceptors.response.use(response => { 
     console.log('interceptor')
     let target = response.data['Time Series Crypto (5min)']
+    
+    
     function formatRes(arrOne, arrTwo) {
         return resFormatted = _.zip(arrOne,arrTwo)
     }
     const reqKeys= Object.keys(target).map((thing) => {
         return Date.parse(thing)
     })
-
     const formattedOb = Object.values(target).map((thing) => {
             return Object.values(thing)
         })   

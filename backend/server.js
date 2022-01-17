@@ -19,7 +19,7 @@ let path = require('path')
 
 
 const sessionConfig = {
-    secret: 'take your shoes off and throw them in the lake',
+    secret: 'the-secret-is-hyphenated',
     resave: false,
     saveUninitialized: true,
     cookie: {

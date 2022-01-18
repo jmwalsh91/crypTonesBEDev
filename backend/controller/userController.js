@@ -9,6 +9,7 @@ const Patch = require('../models/patchModel.js')
 const passport = require('passport')
 const localStrategy = require('passport-local')
 
+
 userRouter.get('/test', (req, res) => {
     console.log('oh hi there this is userRouter speaking')
     res.send('this is a response')
@@ -32,9 +33,9 @@ userRouter.post('/login', passport.authenticate('local'), (req, res, next) => {
           req.logIn(user, (err) => {
             if (err) throw err;
             currentUser = {
-                username: req.user.username,
-                isLoggedIn: true,
-                savedPatches: req.user.savedPatches
+                username : req.user.username,
+                id : req.user._id,
+                savedPatches : req.user.savedPatches
           }
             
             res.send({currentUser});
@@ -51,9 +52,9 @@ userRouter.post('/logout', (req, res) => {
     });
    
 
-userRouter.post('/patch/save', async (req, res) => {
+/* userRouter.post('/patch/save', async (req, res) => {
   console.log(req.body)
-    
+  let patchOwner = req.body.patchOwner
   let newPatch = {
     patchParams : {
       name: req.body.patchName,
@@ -61,11 +62,74 @@ userRouter.post('/patch/save', async (req, res) => {
       chartData: req.body.chartData
     } 
   } 
-  const savedPatch = await Patch.create(newPatch) 
-  console.log(savedPatch)
-  res.send(savedPatch)
-  
-})
+  const savedPatch = await Patch.create(newPatch)
+  await User.findByIdAndUpdate(
+    patchOwner, 
+    {$push: {"savedPatches" : savedPatch}},
+    {new: true},
+    function(err, docs) {
+      if (err) {
+        console.log(err)
+      } else {
+        console.log(docs)
+        return updatedUser = docs
+    } res.send('this is ' + updatedUser)
+  }).clone().catch(function(err){console.log(err)})
+}) */
+/* 
+userRouter.post('/patch/save', async (req, res) => {
+  console.log(req.body)
+  let patchOwner = req.body.patchOwner
+  let newPatch = {
+    patchParams : {
+      name: req.body.patchName,
+      noteData: req.body.noteData,
+      chartData: req.body.chartData
+    } 
+  } 
+  const savedPatch = await Patch.create(newPatch)
+  .then(() => {
+    let updatedUser = User.findByIdAndUpdate(
+      patchOwner, 
+      {$push: {"savedPatches" : savedPatch}},
+      {new: true},
+      function(err, docs) {
+        if (err) {
+          console.log(err)    
+        } else {
+          return res.send(updatedUser)
+        }
+      })      
+  }
+)}) */
+userRouter.post('/patch/save', async (req, res) => {
+  console.log(req.body)
+  let patchOwner = req.body.patchOwner
+  let newPatch = {
+    patchParams : {
+      name : req.body.patchName,
+      noteData : req.body.noteData,
+      chartData : req.body.chartData
+    } 
+  } 
+  const savedPatch = await Patch.create(newPatch)
+  User.findByIdAndUpdate(
+      patchOwner, 
+      {$push: {"savedPatches" : savedPatch}},
+      {new: true},
+      function(err, docs) {
+        if (err) {
+          console.log(err)    
+        } else {
+          console.log('docs right below')
+          console.log(docs.savedPatches)
+          let savedPatches = docs.savedPatches 
+          return res.send(savedPatches)
+        }
+      })      
+  })
+
+
 
 
 module.exports = userRouter

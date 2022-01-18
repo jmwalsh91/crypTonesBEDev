@@ -4,6 +4,7 @@ const userRouter = express.Router()
 const mongoose = require('mongoose')
 const userModel = require('../models/userModel')
 const User = require('../models/userModel.js')
+const Patch = require('../models/patchModel.js')
 //change router to axios?
 const passport = require('passport')
 const localStrategy = require('passport-local')
@@ -44,10 +45,35 @@ userRouter.post('/login', passport.authenticate('local'), (req, res, next) => {
       })(req, res, next);
     });
 
-    userRouter.post('/logout', (req, res) => {
-      req.logout();
-      res.send('Congrats.');
+userRouter.post('/logout', (req, res) => {
+      req.logout()
+      res.send('Congrats.')
     });
-          
-        
+   
+
+userRouter.post('/patch/save', async (req, res) => {
+  console.log(req.body)
+    
+  let newPatch = {
+    patchParams : {
+      name: req.body.patchName,
+      noteData: req.body.noteData,
+      chartData: req.body.chartData
+    } 
+  } 
+  const savedPatch = await Patch.create(newPatch) 
+  console.log(savedPatch)
+  res.send(savedPatch)
+  
+})
+
+
 module.exports = userRouter
+/* 
+const PatchSchema = new mongoose.Schema({
+  patchParams : {
+      name: {type: String, required: true},
+      noteData: {type: Array, required: true},
+      chartData: {type: Array, required: true}
+  }
+}) */

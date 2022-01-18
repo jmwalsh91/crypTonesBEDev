@@ -45,11 +45,32 @@ userRouter.post('/login', passport.authenticate('local'), (req, res, next) => {
         }
       })(req, res, next);
     });
-
-userRouter.post('/logout', (req, res) => {
+    userRouter.post('/logout', (req, res) => {
       req.logout()
       res.send('Congrats.')
     });
+
+userRouter.get('/showallpatches/:id?', (req, res)=> {
+  let userId = req.query.id
+  console.log(req.query)
+  User.findById(userId, 'savedPatches' , (err, docs) => {
+    if(err) {
+      console.log(err)
+    } 
+    if (docs) {
+      console.log('whrlfksjhkgsjdkghlksdjfhgiosdejhg')
+      console.log(docs)
+      res.data = (docs)
+      return res.send(res.data)
+    }
+    
+  })
+});
+   
+  
+  /* User.findById(req.body) */
+      
+   
    
 
 /* userRouter.post('/patch/save', async (req, res) => {
@@ -133,11 +154,3 @@ userRouter.post('/patch/save', async (req, res) => {
 
 
 module.exports = userRouter
-/* 
-const PatchSchema = new mongoose.Schema({
-  patchParams : {
-      name: {type: String, required: true},
-      noteData: {type: Array, required: true},
-      chartData: {type: Array, required: true}
-  }
-}) */

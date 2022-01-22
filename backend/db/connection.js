@@ -1,7 +1,7 @@
 //move to connections
 const mongoose = require('mongoose')
-const mongoURI = 'mongodb://127.0.0.1:27017/cryptones'
-
+const mongoURI = process.env.MONGODB_URI
+console.log(mongoURI)
 const db = mongoose.connection
 mongoose.connect( mongoURI, {
     useNewUrlParser: true,

@@ -1,6 +1,8 @@
 const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 
-const PatchSchema = new mongoose.Schema({
+const patchSchema = new Schema({
+    patchOwner : {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
     patchParams : {
         name: {type: String, required: true},
         noteData: {type: Array, required: true},
@@ -8,4 +10,6 @@ const PatchSchema = new mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model('Patch', PatchSchema)
+
+const Patch = mongoose.model('Patch', patchSchema)
+module.exports = Patch

@@ -1,8 +1,10 @@
 const express = require('express')
+const dotenv = require('dotenv').config()
 const router = express.Router()
 const mongoose = require('mongoose')
 const axios = require('axios').default;
 const _ = require('lodash')
+let envapikey = process.env.APIKEY 
 
 
 const axiosCryptAlpha = axios.create({
@@ -34,6 +36,7 @@ axiosCryptAlpha.interceptors.response.use(response => {
 
 
 router.get('/ohlcv', (req, res, err) => {
+   
     axiosCryptAlpha.get( '', {
         params: {
             symbol: 'BTC',

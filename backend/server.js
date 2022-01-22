@@ -1,7 +1,8 @@
 
 const express = require('express')
+const dotenv = require('dotenv').config()
 const app = express()
-const PORT = 4000
+const PORT = process.env.PORT || 4000
 const methodOverride = require('method-override')
 const mongoose = require('mongoose')
 const cryptoRouter = require('./controller/cryptoController')
@@ -10,12 +11,11 @@ const User = require('./models/userModel')
 /* const axios = require('axios').default; */
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
-const _ = require('lodash')
-const seeds = require('./db/seeds.json')
 const session = require('express-session')
 const passport = require('passport');
 const localStrategy = require('passport-local');
 let path = require('path')
+
 
 
 const sessionConfig = {
@@ -48,6 +48,7 @@ app.use('/crypto/', cryptoRouter)
 
 const routeHit = (req,res,next) =>{
     console.log("A new route was just hit");
+    console.log(req.path)
     next()
 }
 app.use(routeHit)

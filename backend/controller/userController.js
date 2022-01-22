@@ -1,8 +1,5 @@
 const express = require('express')
 const userRouter = express.Router()
-//tidy unused imports mongoose/usermodel
-const mongoose = require('mongoose')
-const userModel = require('../models/userModel')
 const User = require('../models/userModel.js')
 const Patch = require('../models/patchModel.js')
 //change router to axios?
@@ -10,7 +7,8 @@ const passport = require('passport')
 const localStrategy = require('passport-local')
 
 
-userRouter.get('/test', (req, res) => {
+userRouter.get('/', (req, res) => {
+  console.log(req.path)
     console.log('oh hi there this is userRouter speaking')
     res.send('this is a response')
 })
@@ -50,7 +48,7 @@ userRouter.post('/login', passport.authenticate('local'), (req, res, next) => {
       res.send('Congrats.')
     });
 
-userRouter.get('/showallpatches/:id?', (req, res)=> {
+/* userRouter.get('/showallpatches/:id?', (req, res)=> {
   let userId = req.query.id
   console.log(req.query)
   User.findById(userId, 'savedPatches' , (err, docs) => {
@@ -58,16 +56,45 @@ userRouter.get('/showallpatches/:id?', (req, res)=> {
       console.log(err)
     } 
     if (docs) {
-      console.log('whrlfksjhkgsjdkghlksdjfhgiosdejhg')
-      console.log(docs)
       res.data = (docs)
       return res.send(res.data)
     }
     
   })
 });
-   
+    */
   
+
+userRouter.get('/showallpatches/:id', (req, res) => {
+  let userId = req.query.id
+  Patch.find({ userId: {$exists : true}}, (err, docs) => {
+     if(err) {
+         console.log(`Error: ` + err)
+       } else {
+         console.log(docs)
+         let patches = docs
+         res.data = patches
+         return res.send(res.data)
+       } 
+    })
+  })
+
+  userRouter.patch('/patch/rename/:id', (req, res)=> {
+    console.log(req.params.id)
+    let patchId = req.query.id
+    console.log(req.body.newName)
+    console.log(patchId)
+    let newName = req.body.newName
+    Patch.findOneAndUpdate({patchId}, {$set: {'patchParams.name': newName}}, (err, docs) => {
+       if(err) {
+           console.log(`Error: ` + err)
+         } else {
+           console.log(docs)
+           let patches = docs
+           return res.send(docs)
+         } 
+      })
+    })
   /* User.findById(req.body) */
       
    
@@ -127,6 +154,7 @@ userRouter.post('/patch/save', async (req, res) => {
   console.log(req.body)
   let patchOwner = req.body.patchOwner
   let newPatch = {
+    patchOwner: patchOwner,
     patchParams : {
       name : req.body.patchName,
       noteData : req.body.noteData,

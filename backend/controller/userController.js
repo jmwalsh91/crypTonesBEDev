@@ -12,7 +12,7 @@ userRouter.get('/', (req, res) => {
     console.log('oh hi there this is userRouter speaking')
     res.send('this is a response')
 })
-
+/* 
 userRouter.post("/register", async (request, response, err) => {
     const password = request.body.password
     const username = request.body.email
@@ -21,12 +21,41 @@ userRouter.post("/register", async (request, response, err) => {
     console.log(newAcct)
     const regUser = await User.register(newAcct, password)
     console.log(regUser + ' is reguser')
-});
+}); */
+userRouter.post("/register", async (req, res, err) => {
+  /* const password = req.body.password
+  const username = req.body.email */
+  const newAcct = new User({username: req.body.email})
+  console.log(newAcct)
+  const regUser = await User.register(newAcct, req.body.password, (err, user) => {
+   if (err) {
+     console.log(err)
+     throw err
+   } else {
+     user ? res.send(user + 'user true') : res.send(res.body)
+   }
+   console.log(res.body)
+  })
+})
+
+userRouter.delete('/patch/delete/:id', (req, res)=> {
+  let patchId = req.params.id 
+  Patch.findByIdAndDelete(patchId, (err, docs) => {
+     if(err) {
+         console.log(`Error: ` + err)
+       } else {
+         console.log(docs)
+         return res.send(docs)
+       } 
+    })
+  })
+
+
 
 userRouter.post('/login', passport.authenticate('local'), (req, res, next) => {
     passport.authenticate("local", (err, user, info) => {
-        if (err) throw err;
-        if (!user) res.send("No such user");
+        if (err) throw err
+        if (!user) res.send("No such user")
         else {
           req.logIn(user, (err) => {
             if (err) throw err;
@@ -35,35 +64,16 @@ userRouter.post('/login', passport.authenticate('local'), (req, res, next) => {
                 id : req.user._id,
                 savedPatches : req.user.savedPatches
           }
-            
-            res.send({currentUser});
-
-            console.log(currentUser);
-          });
+            res.send({currentUser})
+          })
         }
-      })(req, res, next);
+      })(req, res, next)
     });
+
     userRouter.post('/logout', (req, res) => {
       req.logout()
       res.send('Congrats.')
     });
-
-/* userRouter.get('/showallpatches/:id?', (req, res)=> {
-  let userId = req.query.id
-  console.log(req.query)
-  User.findById(userId, 'savedPatches' , (err, docs) => {
-    if(err) {
-      console.log(err)
-    } 
-    if (docs) {
-      res.data = (docs)
-      return res.send(res.data)
-    }
-    
-  })
-});
-    */
-  
 
 userRouter.get('/showallpatches/:id', (req, res) => {
   let userId = req.query.id
@@ -80,77 +90,22 @@ userRouter.get('/showallpatches/:id', (req, res) => {
   })
 
   userRouter.patch('/patch/rename/:id', (req, res)=> {
-    console.log(req.params.id)
-    let patchId = req.query.id
-    console.log(req.body.newName)
+    console.log(req.params.id + ' is req params id')
+    let patchId = req.params.id
+    console.log(req.body.newName + ' is new name')
     console.log(patchId)
     let newName = req.body.newName
-    Patch.findOneAndUpdate({patchId}, {$set: {'patchParams.name': newName}}, (err, docs) => {
+    Patch.findByIdAndUpdate(patchId, {$set: {'patchParams.name': newName}}, (err, docs) => {
        if(err) {
            console.log(`Error: ` + err)
          } else {
            console.log(docs)
-           let patches = docs
            return res.send(docs)
          } 
       })
     })
-  /* User.findById(req.body) */
-      
-   
-   
-
-/* userRouter.post('/patch/save', async (req, res) => {
-  console.log(req.body)
-  let patchOwner = req.body.patchOwner
-  let newPatch = {
-    patchParams : {
-      name: req.body.patchName,
-      noteData: req.body.noteData,
-      chartData: req.body.chartData
-    } 
-  } 
-  const savedPatch = await Patch.create(newPatch)
-  await User.findByIdAndUpdate(
-    patchOwner, 
-    {$push: {"savedPatches" : savedPatch}},
-    {new: true},
-    function(err, docs) {
-      if (err) {
-        console.log(err)
-      } else {
-        console.log(docs)
-        return updatedUser = docs
-    } res.send('this is ' + updatedUser)
-  }).clone().catch(function(err){console.log(err)})
-}) */
-/* 
-userRouter.post('/patch/save', async (req, res) => {
-  console.log(req.body)
-  let patchOwner = req.body.patchOwner
-  let newPatch = {
-    patchParams : {
-      name: req.body.patchName,
-      noteData: req.body.noteData,
-      chartData: req.body.chartData
-    } 
-  } 
-  const savedPatch = await Patch.create(newPatch)
-  .then(() => {
-    let updatedUser = User.findByIdAndUpdate(
-      patchOwner, 
-      {$push: {"savedPatches" : savedPatch}},
-      {new: true},
-      function(err, docs) {
-        if (err) {
-          console.log(err)    
-        } else {
-          return res.send(updatedUser)
-        }
-      })      
-  }
-)}) */
-userRouter.post('/patch/save', async (req, res) => {
+  
+userRouter.put('/patch/save', async (req, res) => {
   console.log(req.body)
   let patchOwner = req.body.patchOwner
   let newPatch = {
@@ -178,7 +133,6 @@ userRouter.post('/patch/save', async (req, res) => {
       })      
   })
 
-
-
-
 module.exports = userRouter
+
+
